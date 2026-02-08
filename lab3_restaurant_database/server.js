@@ -62,7 +62,6 @@ app.get("/restaurants/cuisine/:cuisine", async (req, res) => {
 });
 
 app.get("/restaurants/Delicatessen", async (req, res) => {
-  try {
     const restaurants = await Restaurant.find(
       {
         cuisine: "Delicatessen",
@@ -77,9 +76,7 @@ app.get("/restaurants/Delicatessen", async (req, res) => {
     ).sort({ name: 1 });
 
     res.json(restaurants);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
+
 });
 
 const PORT = process.env.PORT || 3000;
