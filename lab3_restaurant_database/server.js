@@ -25,9 +25,57 @@ mongoose
   .catch((err) => console.error("MongoDB connection error:", err));
 
 
+
 app.get("/restaurants", async (req, res) => {
   try {
-    const restaurants = await Restaurant.find({});
+    const sortOrder =
+      req.query.sortBy === "DESC" ? -1 : 1;
+
+    const restaurants = await Restaurant.find(
+      {},
+      {
+        _id: 1,
+        cuisine: 1,
+        name: 1,
+        city: 1,
+        restaurant_id: 1
+      }
+    ).sort({ restaurant_id: sortOrder });
+
+    res.json(restaurants);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+
+
+app.get("/restaurants/cuisine/:cuisine", async (req, res) => {
+  try {
+    const cuisineParam = req.params.cuisine;
+
+    const restaurants = await Restaurant.find({ cuisine: cuisineParam });
+    res.json(restaurants);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.get("/restaurants/Delicatessen", async (req, res) => {
+  try {
+    const restaurants = await Restaurant.find(
+      {
+        cuisine: "Delicatessen",
+        city: { $ne: "Brooklyn" }
+      },
+      {
+        _id: 0,
+        cuisine: 1,
+        name: 1,
+        city: 1
+      }
+    ).sort({ name: 1 });
+
     res.json(restaurants);
   } catch (err) {
     res.status(500).json({ error: err.message });
